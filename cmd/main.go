@@ -7,11 +7,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
 	"github.com/gogapopp/trainee-assignment/internal/config"
 	"github.com/gogapopp/trainee-assignment/internal/handler"
-	mw "github.com/gogapopp/trainee-assignment/internal/handler/middlewares"
 	"github.com/gogapopp/trainee-assignment/internal/lib/logger"
 	"github.com/gogapopp/trainee-assignment/internal/repository/postgres"
 	"github.com/gogapopp/trainee-assignment/internal/service"
@@ -34,26 +31,8 @@ func main() {
 	defer repo.Close(ctx)
 
 	service := service.New(logger, repo)
-	APIHandler := handler.New(logger, service)
 
-	r := chi.NewRouter()
-
-	// вспомогательные ручки (по сути мы считаем, что юзер уже получил токен откуда то, например из сервиса авторизации)
-	r.Get("/signup", APIHandler.SignUp)
-	r.Get("/signin", APIHandler.SignIn)
-
-	// проверяем все синтаксические проверки на уровне спецификации
-	middlewares := []handler.MiddlewareFunc{mw.AuthMiddleware, middleware.Logger, middleware.RequestID}
-	chiOptions := handler.ChiServerOptions{
-		BaseRouter:  r,
-		Middlewares: middlewares,
-	}
-	h := handler.HandlerWithOptions(APIHandler, chiOptions)
-
-	srv := &http.Server{
-		Addr:    config.HTTPConfig.Addr,
-		Handler: h,
-	}
+	srv := handler.Routes(logger, config.HTTPConfig.Addr, service)
 
 	go func() {
 		logger.Infof("Running the server at: %s", config.HTTPConfig.Addr)
