@@ -3,13 +3,25 @@ package handler
 import (
 	"fmt"
 	"net/http"
+
+	"go.uber.org/zap"
 )
 
-type APIHandler struct {
-}
+type (
+	Service interface {
+	}
 
-func New() *APIHandler {
-	return &APIHandler{}
+	APIHandler struct {
+		logger  *zap.SugaredLogger
+		service Service
+	}
+)
+
+func New(logger *zap.SugaredLogger, service Service) *APIHandler {
+	return &APIHandler{
+		logger:  logger,
+		service: service,
+	}
 }
 
 func (h *APIHandler) GetBanner(w http.ResponseWriter, r *http.Request, params GetBannerParams) {

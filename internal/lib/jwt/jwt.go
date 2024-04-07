@@ -14,7 +14,7 @@ var (
 // TODO:
 const (
 	SECRET_KEY = "secret_key"
-	TOKEN_EXP  = time.Hour * 3
+	TOKEN_EXP  = time.Minute * 10
 )
 
 type tokenClaims struct {
