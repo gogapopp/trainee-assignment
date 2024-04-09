@@ -57,5 +57,5 @@ func (h *APIHandler) GetUserBanner(w http.ResponseWriter, r *http.Request, param
 	fmt.Println(r.Context().Value(middlewares.UserIDKey), r.Context().Value(middlewares.UserRoleKey))
 	fmt.Println(params.FeatureId, params.TagId, params.UseLastRevision)
 	w.WriteHeader(http.StatusConflict)
-	w.Write([]byte("bb"))
+	_, _ = w.Write([]byte("bb"))
 }
