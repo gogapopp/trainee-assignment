@@ -1,10 +1,16 @@
 package config
 
-import "github.com/joho/godotenv"
+import (
+	"os"
+
+	"github.com/joho/godotenv"
+)
 
 type Config struct {
-	HTTPConfig *httpConfig
-	PGConfig   *pgConfig
+	HTTPConfig  *httpConfig
+	PGConfig    *pgConfig
+	JWT_SECRET  string
+	PASS_SECRET string
 }
 
 func New(path string) (*Config, error) {
@@ -21,8 +27,10 @@ func New(path string) (*Config, error) {
 		return nil, err
 	}
 	return &Config{
-		HTTPConfig: h,
-		PGConfig:   p,
+		HTTPConfig:  h,
+		PGConfig:    p,
+		JWT_SECRET:  os.Getenv("JWT_SECRET_KEY"),
+		PASS_SECRET: os.Getenv("PASS_HASH_SECRET"),
 	}, nil
 }
 

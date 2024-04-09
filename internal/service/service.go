@@ -1,20 +1,31 @@
 package service
 
-import "go.uber.org/zap"
+import (
+	"context"
+
+	"github.com/gogapopp/trainee-assignment/internal/models"
+	"go.uber.org/zap"
+)
 
 type (
-	Repostiry interface {
+	Repository interface {
+		SignUp(ctx context.Context, user models.SignUpRequest) error
+		SignIn(ctx context.Context, user models.SignInRequest) (int, string, error)
 	}
 
-	Service struct {
-		logger *zap.SugaredLogger
-		repo   Repostiry
+	service struct {
+		logger     *zap.SugaredLogger
+		repo       Repository
+		jwtSecret  string
+		passSecret string
 	}
 )
 
-func New(logger *zap.SugaredLogger, repository Repostiry) *Service {
-	return &Service{
-		logger: logger,
-		repo:   repository,
+func New(jwtSecret, passSecret string, logger *zap.SugaredLogger, repository Repository) *service {
+	return &service{
+		logger:     logger,
+		repo:       repository,
+		jwtSecret:  jwtSecret,
+		passSecret: passSecret,
 	}
 }

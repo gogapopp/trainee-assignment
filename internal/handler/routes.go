@@ -15,11 +15,9 @@ func Routes(logger *zap.SugaredLogger, addr string, service Service) *http.Serve
 
 	r := chi.NewRouter()
 
-	// вспомогательные ручки (по сути мы считаем, что юзер уже получил токен откуда то, например из сервиса авторизации)
-	r.Get("/signup", APIHandler.SignUp)
-	r.Get("/signin", APIHandler.SignIn)
+	r.Post("/signup", APIHandler.SignUp)
+	r.Post("/signin", APIHandler.SignIn)
 
-	// создаем сервер на основе спецификации
 	middlewares := []MiddlewareFunc{mw.AuthMiddleware, middleware.Logger, middleware.RequestID}
 	chiOptions := ChiServerOptions{
 		BaseRouter:  r,

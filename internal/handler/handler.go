@@ -1,14 +1,19 @@
 package handler
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
+	"github.com/gogapopp/trainee-assignment/internal/handler/middlewares"
+	"github.com/gogapopp/trainee-assignment/internal/models"
 	"go.uber.org/zap"
 )
 
 type (
 	Service interface {
+		SignUp(ctx context.Context, user models.SignUpRequest) error
+		SignIn(ctx context.Context, user models.SignInRequest) (string, error)
 	}
 
 	APIHandler struct {
@@ -49,15 +54,8 @@ func (h *APIHandler) PatchBannerId(w http.ResponseWriter, r *http.Request, id in
 // Получение баннера для пользователя
 // (GET /user_banner)
 func (h *APIHandler) GetUserBanner(w http.ResponseWriter, r *http.Request, params GetUserBannerParams) {
-	fmt.Println(params)
+	fmt.Println(r.Context().Value(middlewares.UserIDKey), r.Context().Value(middlewares.UserRoleKey))
+	fmt.Println(params.FeatureId, params.TagId, params.UseLastRevision)
 	w.WriteHeader(http.StatusConflict)
 	w.Write([]byte("bb"))
-}
-
-func (h *APIHandler) SignUp(w http.ResponseWriter, r *http.Request) {
-
-}
-
-func (h *APIHandler) SignIn(w http.ResponseWriter, r *http.Request) {
-
 }

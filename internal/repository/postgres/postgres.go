@@ -3,28 +3,42 @@ package postgres
 import (
 	"context"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type repository struct {
-	db *pgx.Conn
+type storage struct {
+	db *pgxpool.Pool
 }
 
-func New(dsn string) (*repository, error) {
+func New(dsn string) (*storage, error) {
 	ctx := context.Background()
-	conn, err := pgx.Connect(ctx, dsn)
+	db, err := pgxpool.New(ctx, dsn)
 	if err != nil {
 		return nil, err
 	}
-	err = conn.Ping(ctx)
+	err = db.Ping(ctx)
 	if err != nil {
 		return nil, err
 	}
-	return &repository{
-		db: conn,
+
+	_, err = db.Exec(ctx, `
+	CREATE TABLE IF NOT EXISTS users (
+		user_id SERIAL PRIMARY KEY,
+		username TEXT,
+		password_hash TEXT,
+		is_admin BOOLEAN
+	);
+	CREATE UNIQUE INDEX IF NOT EXISTS username_idx ON users(username);
+	`)
+	if err != nil {
+		return nil, err
+	}
+
+	return &storage{
+		db: db,
 	}, nil
 }
 
-func (r *repository) Close(ctx context.Context) error {
-	return r.db.Close(ctx)
+func (s *storage) Close() {
+	s.db.Close()
 }

@@ -28,9 +28,9 @@ func main() {
 	if err != nil {
 		logger.Fatal(err)
 	}
-	defer repo.Close(ctx)
+	defer repo.Close()
 
-	service := service.New(logger, repo)
+	service := service.New(config.JWT_SECRET, config.PASS_SECRET, logger, repo)
 
 	srv := handler.Routes(logger, config.HTTPConfig.Addr, service)
 
