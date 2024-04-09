@@ -30,9 +30,10 @@ func main() {
 	}
 	defer repo.Close()
 
-	service := service.New(config.JWT_SECRET, config.PASS_SECRET, logger, repo)
+	authService := service.NewAuthService(logger, config.JWT_SECRET, config.PASS_SECRET, repo)
+	bannerService := service.NewBannerService(logger, repo)
 
-	srv := handler.Routes(logger, config.HTTPConfig.Addr, service)
+	srv := handler.Routes(logger, config.HTTPConfig.Addr, authService, bannerService)
 
 	go func() {
 		logger.Infof("Running the server at: %s", config.HTTPConfig.Addr)

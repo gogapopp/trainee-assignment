@@ -14,7 +14,7 @@ type Config struct {
 }
 
 func New(path string) (*Config, error) {
-	err := load(path)
+	err := godotenv.Load(path)
 	if err != nil {
 		return nil, err
 	}
@@ -32,13 +32,4 @@ func New(path string) (*Config, error) {
 		JWT_SECRET:  os.Getenv("JWT_SECRET_KEY"),
 		PASS_SECRET: os.Getenv("PASS_HASH_SECRET"),
 	}, nil
-}
-
-func load(path string) error {
-	err := godotenv.Load(path)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
