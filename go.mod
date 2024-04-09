@@ -22,7 +22,7 @@ require (
 
 require (
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
-	github.com/go-chi/chi v1.5.5
+	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-openapi/jsonpointer v0.20.2 // indirect
 	github.com/go-openapi/swag v0.22.8 // indirect
 	github.com/golang-jwt/jwt/v5 v5.2.1
