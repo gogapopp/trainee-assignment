@@ -10,13 +10,13 @@ import (
 )
 
 type (
-	CtxKeyUserID   int
-	CtxKeyUserRole bool
+	CtxKeyUserID  int
+	CtxKeyIsAdmin bool
 )
 
 const (
-	UserIDKey   CtxKeyUserID   = 0
-	UserRoleKey CtxKeyUserRole = false
+	UserIDKey      CtxKeyUserID  = 0
+	UserIsAdminKey CtxKeyIsAdmin = false
 )
 
 func AuthMiddleware(next http.Handler) http.Handler {
@@ -34,7 +34,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		}
 
 		ctx := context.WithValue(r.Context(), UserIDKey, fmt.Sprint(userID))
-		ctx = context.WithValue(ctx, UserRoleKey, fmt.Sprint(role))
+		ctx = context.WithValue(ctx, UserIsAdminKey, fmt.Sprint(role))
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	}

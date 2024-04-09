@@ -16,16 +16,19 @@ func (h *APIHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	err = h.service.SignUp(r.Context(), req)
+	err = h.auth.SignUp(r.Context(), req)
 	if err != nil {
 		if errors.Is(err, repository.ErrUserExist) {
-			http.Error(w, "user already exists", http.StatusBadRequest)
+			http.Error(w, "user already exists", http.StatusConflict)
+			return
+		}
+		if errors.As(err, &valErr) {
+			http.Error(w, "password and username is required field", http.StatusBadRequest)
 			return
 		}
 		http.Error(w, "something went wrong", http.StatusInternalServerError)
 		return
 	}
-
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 }
@@ -38,10 +41,14 @@ func (h *APIHandler) SignIn(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	token, err := h.service.SignIn(r.Context(), req)
+	token, err := h.auth.SignIn(r.Context(), req)
 	if err != nil {
 		if errors.Is(err, repository.ErrUserNotExist) {
 			http.Error(w, "user does not exists or wrong password", http.StatusBadRequest)
+			return
+		}
+		if errors.As(err, &valErr) {
+			http.Error(w, "password and username is required field", http.StatusBadRequest)
 			return
 		}
 		http.Error(w, "something went wrong", http.StatusInternalServerError)

@@ -10,8 +10,8 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func Routes(logger *zap.SugaredLogger, addr string, service Service) *http.Server {
-	APIHandler := New(logger, service)
+func Routes(logger *zap.SugaredLogger, addr string, authService authService, bannerService bannerService) *http.Server {
+	APIHandler := New(logger, authService, bannerService)
 
 	r := chi.NewRouter()
 
