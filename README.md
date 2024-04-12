@@ -2,11 +2,11 @@
 
 ## Протокол
 
-Описано в файле [api.yml](api.yml).
+Описан в файле [api.yml](api.yml).
 
 ## Генерация кода из спецификации
 
-Установите `oapi-codegen` с помощью команды `go install github.com/deepmap/oapi-codegen/v2/cmd/oapi-codegen@latest` и сгенерируйте код:
+Установите [oapi-codegen](https://github.com/deepmap/oapi-codegen/) и сгенерируйте код:
 
 ```bash
 oapi-codegen -package=handler -generate="chi-server,types,spec" api.yaml > internal/handler/api.gen.go
