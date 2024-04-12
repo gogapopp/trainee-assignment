@@ -7,6 +7,6 @@ docker-compose-up:
 docker-compose-down:
 	@docker-compose down
 
-run: oapi-gen docker-compose-up
+run: docker-compose-up
 
 stop: docker-compose-down
