@@ -26,7 +26,9 @@ func New(dsn string) (*storage, error) {
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
-	defer tx.Rollback(ctx)
+	defer func() {
+		err = tx.Rollback(ctx)
+	}()
 	_, err = tx.Exec(ctx, `
 	CREATE TABLE IF NOT EXISTS users (
 		user_id SERIAL PRIMARY KEY,
