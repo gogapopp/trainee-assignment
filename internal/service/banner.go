@@ -42,6 +42,16 @@ func (b *bannerService) GetUserBanner(ctx context.Context, params models.UserBan
 		if err != nil {
 			return models.UserBannerResponse{}, fmt.Errorf("%s: %w", op, err)
 		}
+		b.cache.SetUserBannerInCache(models.PostBannerRequest{
+			TagIDs:    []int{params.TagId},
+			FeatureID: params.FeatureId,
+			IsActive:  banner.IsActive,
+			Content: models.Content{
+				Title: banner.Content.Title,
+				Text:  banner.Content.Text,
+				URL:   banner.Content.URL,
+			},
+		})
 		return banner, nil
 	}
 	err := isActive(ctx, banner.IsActive)
