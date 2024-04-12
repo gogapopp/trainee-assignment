@@ -22,6 +22,7 @@ type (
 		GetBanners(ctx context.Context, params models.BannersRequest) ([]models.BannersResponse, error)
 		DeleteBanner(ctx context.Context, id int) error
 		PatchBannerId(ctx context.Context, id int, banner models.PatchBanner) error
+		DeleteBannerByFeatureId(ctx context.Context, featureId int) error
 	}
 
 	APIHandler struct {

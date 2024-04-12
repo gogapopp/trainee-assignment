@@ -73,11 +73,11 @@ func (s *storage) DeleteBanner(ctx context.Context, id int) error {
 		query = "DELETE FROM banners WHERE banner_id=$1;"
 	)
 	pgt, err := s.db.Exec(ctx, query, id)
-	if pgt.RowsAffected() < 1 {
-		return fmt.Errorf("%s: %w", op, repository.ErrBannerNotExist)
-	}
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
+	}
+	if pgt.RowsAffected() < 1 {
+		return fmt.Errorf("%s: %w", op, repository.ErrBannerNotExist)
 	}
 	return nil
 }
@@ -117,11 +117,26 @@ func (s *storage) PatchBannerId(ctx context.Context, id int, banner models.Patch
 	args = append(args, id)
 
 	pgt, err := s.db.Exec(ctx, query, args...)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
 	if pgt.RowsAffected() < 1 {
 		return fmt.Errorf("%s: %w", op, repository.ErrBannerNotExist)
 	}
+	return nil
+}
+
+func (s *storage) DeleteBannerByFeatureId(ctx context.Context, featureId int) error {
+	const (
+		op    = "postgres.banner.DeleteBannerByFeatureId"
+		query = "DELETE FROM banners WHERE feature_id=$1;"
+	)
+	pgt, err := s.db.Exec(ctx, query, featureId)
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
+	}
+	if pgt.RowsAffected() < 1 {
+		return fmt.Errorf("%s: %w", op, repository.ErrBannerNotExist)
 	}
 	return nil
 }
