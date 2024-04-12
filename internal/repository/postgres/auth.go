@@ -30,22 +30,21 @@ func (s *storage) SignUp(ctx context.Context, user models.SignUpRequest) error {
 	return nil
 }
 
-func (s *storage) SignIn(ctx context.Context, user models.SignInRequest) (int, string, error) {
+func (s *storage) SignIn(ctx context.Context, user models.SignInRequest) (string, error) {
 	const (
 		op    = "postgres.auth.SignIn"
-		query = "SELECT user_id, role FROM users WHERE username=$1 AND password_hash=$2;"
+		query = "SELECT role FROM users WHERE username=$1 AND password_hash=$2;"
 	)
 	var (
-		userId int
-		role   string
+		role string
 	)
 	row := s.db.QueryRow(ctx, query, user.Username, user.PasswordHash)
-	err := row.Scan(&userId, &role)
+	err := row.Scan(&role)
 	if err != nil {
 		if err == pgx.ErrNoRows {
-			return 0, "", fmt.Errorf("%s: %w", op, repository.ErrUserNotExist)
+			return "", fmt.Errorf("%s: %w", op, repository.ErrUserNotExist)
 		}
-		return 0, "", fmt.Errorf("%s: %w", op, err)
+		return "", fmt.Errorf("%s: %w", op, err)
 	}
-	return userId, role, nil
+	return role, nil
 }

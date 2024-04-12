@@ -14,7 +14,7 @@ var ErrUndefinedRole = errors.New("undefined role")
 type (
 	authRepo interface {
 		SignUp(ctx context.Context, user models.SignUpRequest) error
-		SignIn(ctx context.Context, user models.SignInRequest) (int, string, error)
+		SignIn(ctx context.Context, user models.SignInRequest) (string, error)
 	}
 
 	bannerRepo interface {

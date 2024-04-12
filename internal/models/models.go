@@ -69,6 +69,6 @@ type (
 		TagIds    []int   `json:"tag_ids,omitempty"`
 		FeatureId int     `json:"feature_id,omitempty"`
 		Content   Content `json:"content,omitempty"`
-		IsActive  bool    `json:"is_active,omitempty"`
+		IsActive  *bool   `json:"is_active,omitempty"`
 	}
 )

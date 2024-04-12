@@ -87,7 +87,7 @@ func (s *storage) PatchBannerId(ctx context.Context, id int, banner models.Patch
 	query := "UPDATE banners SET"
 	args := []interface{}{}
 	i := 1
-
+	fmt.Println(banner)
 	if banner.FeatureId != 0 {
 		query += fmt.Sprintf(" feature_id = $%d,", i)
 		args = append(args, banner.FeatureId)
@@ -103,7 +103,7 @@ func (s *storage) PatchBannerId(ctx context.Context, id int, banner models.Patch
 		args = append(args, banner.Content)
 		i++
 	}
-	if banner.IsActive {
+	if banner.IsActive != nil {
 		query += fmt.Sprintf(" is_active = $%d,", i)
 		args = append(args, banner.IsActive)
 		i++
