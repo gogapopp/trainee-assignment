@@ -10,5 +10,6 @@ FROM alpine:latest
 
 WORKDIR /root/
 COPY --from=builder /github.com/gogapopp/trainee-assignment/source/bin/banner .
+COPY --from=builder /github.com/gogapopp/trainee-assignment/source/.env .
 
 CMD ["./banner"]

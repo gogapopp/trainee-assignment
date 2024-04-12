@@ -15,9 +15,9 @@ import (
 func (s *storage) SignUp(ctx context.Context, user models.SignUpRequest) error {
 	const (
 		op    = "postgres.auth.SignUp"
-		query = "INSERT INTO users (username, password_hash, is_admin) VALUES ($1, $2, $3);"
+		query = "INSERT INTO users (username, password_hash, role) VALUES ($1, $2, $3);"
 	)
-	_, err := s.db.Exec(ctx, query, user.Username, user.PasswordHash, user.IsAdmin)
+	_, err := s.db.Exec(ctx, query, user.Username, user.PasswordHash, user.Role)
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
@@ -33,20 +33,19 @@ func (s *storage) SignUp(ctx context.Context, user models.SignUpRequest) error {
 func (s *storage) SignIn(ctx context.Context, user models.SignInRequest) (int, string, error) {
 	const (
 		op    = "postgres.auth.SignIn"
-		query = "SELECT user_id, is_admin FROM users WHERE username=$1 AND password_hash=$2"
+		query = "SELECT user_id, role FROM users WHERE username=$1 AND password_hash=$2"
 	)
 	var (
-		userId  int
-		isAdmin bool
+		userId int
+		role   string
 	)
-	rows := s.db.QueryRow(ctx, query, user.Username, user.PasswordHash)
-	err := rows.Scan(&userId, &isAdmin)
+	row := s.db.QueryRow(ctx, query, user.Username, user.PasswordHash)
+	err := row.Scan(&userId, &role)
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			return 0, "", fmt.Errorf("%s: %w", op, repository.ErrUserNotExist)
 		}
 		return 0, "", fmt.Errorf("%s: %w", op, err)
 	}
-	isAdminStr := fmt.Sprint(isAdmin)
-	return userId, isAdminStr, nil
+	return userId, role, nil
 }

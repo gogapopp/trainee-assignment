@@ -2,11 +2,14 @@ package service
 
 import (
 	"context"
+	"errors"
 
 	"github.com/go-playground/validator"
 	"github.com/gogapopp/trainee-assignment/internal/models"
 	"go.uber.org/zap"
 )
+
+var ErrUndefinedRole = errors.New("undefined role")
 
 type (
 	authRepo interface {
@@ -15,26 +18,28 @@ type (
 	}
 
 	bannerRepo interface {
+		SaveBanner(ctx context.Context, banner models.PostBannerRequest) (int, error)
 	}
 
 	authService struct {
 		logger     *zap.SugaredLogger
-		auth       authRepo
+		authRepo   authRepo
 		validator  *validator.Validate
 		jwtSecret  string
 		passSecret string
 	}
 
 	bannerService struct {
-		logger *zap.SugaredLogger
-		banner bannerRepo
+		logger     *zap.SugaredLogger
+		bannerRepo bannerRepo
+		validator  *validator.Validate
 	}
 )
 
-func NewAuthService(logger *zap.SugaredLogger, jwtSecret, passSecret string, authRepo authRepo) *authService {
+func NewAuthService(jwtSecret, passSecret string, logger *zap.SugaredLogger, authRepo authRepo) *authService {
 	return &authService{
 		logger:     logger,
-		auth:       authRepo,
+		authRepo:   authRepo,
 		validator:  validator.New(),
 		jwtSecret:  jwtSecret,
 		passSecret: passSecret,
@@ -43,7 +48,8 @@ func NewAuthService(logger *zap.SugaredLogger, jwtSecret, passSecret string, aut
 
 func NewBannerService(logger *zap.SugaredLogger, bannerRepo bannerRepo) *bannerService {
 	return &bannerService{
-		logger: logger,
-		banner: bannerRepo,
+		logger:     logger,
+		bannerRepo: bannerRepo,
+		validator:  validator.New(),
 	}
 }

@@ -17,19 +17,20 @@ type (
 	}
 
 	bannerService interface {
+		SaveBanner(ctx context.Context, banner models.PostBannerRequest) (int, error)
 	}
 
 	APIHandler struct {
-		logger *zap.SugaredLogger
-		auth   authService
-		banner bannerService
+		logger        *zap.SugaredLogger
+		authService   authService
+		bannerService bannerService
 	}
 )
 
 func New(logger *zap.SugaredLogger, authService authService, bannerService bannerService) *APIHandler {
 	return &APIHandler{
-		logger: logger,
-		auth:   authService,
-		banner: bannerService,
+		logger:        logger,
+		authService:   authService,
+		bannerService: bannerService,
 	}
 }

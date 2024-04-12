@@ -15,6 +15,7 @@ import (
 
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/go-chi/chi/v5"
+	"github.com/gogapopp/trainee-assignment/internal/handler/middlewares"
 	"github.com/oapi-codegen/runtime"
 )
 
@@ -562,16 +563,19 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	}
 
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/banner", wrapper.GetBanner)
-	})
-	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/banner", wrapper.PostBanner)
-	})
-	r.Group(func(r chi.Router) {
-		r.Delete(options.BaseURL+"/banner/{id}", wrapper.DeleteBannerId)
-	})
-	r.Group(func(r chi.Router) {
-		r.Patch(options.BaseURL+"/banner/{id}", wrapper.PatchBannerId)
+		r.Use(middlewares.RolesMiddleware)
+		r.Group(func(r chi.Router) {
+			r.Get(options.BaseURL+"/banner", wrapper.GetBanner)
+		})
+		r.Group(func(r chi.Router) {
+			r.Post(options.BaseURL+"/banner", wrapper.PostBanner)
+		})
+		r.Group(func(r chi.Router) {
+			r.Delete(options.BaseURL+"/banner/{id}", wrapper.DeleteBannerId)
+		})
+		r.Group(func(r chi.Router) {
+			r.Patch(options.BaseURL+"/banner/{id}", wrapper.PatchBannerId)
+		})
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/user_banner", wrapper.GetUserBanner)

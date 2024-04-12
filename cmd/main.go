@@ -30,14 +30,14 @@ func main() {
 	}
 	defer repo.Close()
 
-	authService := service.NewAuthService(logger, config.JWT_SECRET, config.PASS_SECRET, repo)
+	authService := service.NewAuthService(config.JWT_SECRET, config.PASS_SECRET, logger, repo)
 	bannerService := service.NewBannerService(logger, repo)
 
-	srv := handler.Routes(logger, config.HTTPConfig.Addr, authService, bannerService)
+	server := handler.Routes(config.HTTPConfig.Addr, logger, authService, bannerService)
 
 	go func() {
 		logger.Infof("Running the server at: %s", config.HTTPConfig.Addr)
-		if err := srv.ListenAndServe(); err != http.ErrServerClosed {
+		if err := server.ListenAndServe(); err != http.ErrServerClosed {
 			logger.Fatalf("error to start the server: %w", err)
 		}
 	}()
@@ -46,7 +46,7 @@ func main() {
 	signal.Notify(sigint, syscall.SIGTERM, syscall.SIGINT, syscall.SIGQUIT)
 	<-sigint
 
-	if err := srv.Shutdown(ctx); err != nil {
+	if err := server.Shutdown(ctx); err != nil {
 		logger.Fatalf("error shutdown the server: %w", err)
 	}
 }

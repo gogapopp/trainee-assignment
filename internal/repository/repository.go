@@ -6,5 +6,5 @@ import (
 
 var (
 	ErrUserExist    = errors.New("user already exists")
-	ErrUserNotExist = errors.New("user does not exists")
+	ErrUserNotExist = errors.New("user does not exist")
 )
