@@ -5,6 +5,8 @@ import (
 )
 
 var (
-	ErrUserExist    = errors.New("user already exists")
-	ErrUserNotExist = errors.New("user does not exists")
+	ErrUserExist        = errors.New("user already exists")
+	ErrUserNotExist     = errors.New("user does not exist")
+	ErrBannerNotExist   = errors.New("banner does not exist")
+	ErrNoFieldsToUpdate = errors.New("no fields to update")
 )

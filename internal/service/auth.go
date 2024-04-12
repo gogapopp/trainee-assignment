@@ -15,8 +15,12 @@ func (a *authService) SignUp(ctx context.Context, user models.SignUpRequest) err
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
+	err = validateRole(user.Role)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, ErrUndefinedRole)
+	}
 	user.PasswordHash = a.generatePasswordHash(user.PasswordHash)
-	err = a.auth.SignUp(ctx, user)
+	err = a.authRepo.SignUp(ctx, user)
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
@@ -30,7 +34,7 @@ func (a *authService) SignIn(ctx context.Context, user models.SignInRequest) (st
 		return "", fmt.Errorf("%s: %w", op, err)
 	}
 	user.PasswordHash = a.generatePasswordHash(user.PasswordHash)
-	userId, userRole, err := a.auth.SignIn(ctx, user)
+	userId, userRole, err := a.authRepo.SignIn(ctx, user)
 	if err != nil {
 		return "", fmt.Errorf("%s: %w", op, err)
 	}
@@ -45,4 +49,11 @@ func (a *authService) generatePasswordHash(password string) string {
 	hash := sha256.New()
 	_, _ = hash.Write([]byte(password))
 	return fmt.Sprintf("%x", hash.Sum([]byte(a.passSecret)))
+}
+
+func validateRole(role string) error {
+	if role != "admin" && role != "user" {
+		return ErrUndefinedRole
+	}
+	return nil
 }
