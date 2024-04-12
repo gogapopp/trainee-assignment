@@ -10,6 +10,7 @@ import (
 	"github.com/gogapopp/trainee-assignment/internal/config"
 	"github.com/gogapopp/trainee-assignment/internal/handler"
 	"github.com/gogapopp/trainee-assignment/internal/lib/logger"
+	"github.com/gogapopp/trainee-assignment/internal/repository/cache"
 	"github.com/gogapopp/trainee-assignment/internal/repository/postgres"
 	"github.com/gogapopp/trainee-assignment/internal/service"
 )
@@ -30,8 +31,10 @@ func main() {
 	}
 	defer repo.Close()
 
+	cache := cache.New()
+
 	authService := service.NewAuthService(config.JWT_SECRET, config.PASS_SECRET, logger, repo)
-	bannerService := service.NewBannerService(logger, repo)
+	bannerService := service.NewBannerService(logger, repo, cache)
 
 	server := handler.Routes(config.HTTPConfig.Addr, logger, authService, bannerService)
 

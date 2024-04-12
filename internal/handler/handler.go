@@ -18,6 +18,10 @@ type (
 
 	bannerService interface {
 		SaveBanner(ctx context.Context, banner models.PostBannerRequest) (int, error)
+		GetUserBanner(ctx context.Context, params models.UserBannerRequest) (models.UserBannerResponse, error)
+		GetBanners(ctx context.Context, params models.BannersRequest) ([]models.BannersResponse, error)
+		DeleteBanner(ctx context.Context, id int) error
+		PatchBannerId(ctx context.Context, id int, banner models.PatchBanner) error
 	}
 
 	APIHandler struct {

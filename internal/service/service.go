@@ -19,6 +19,15 @@ type (
 
 	bannerRepo interface {
 		SaveBanner(ctx context.Context, banner models.PostBannerRequest) (int, error)
+		GetUserBanner(ctx context.Context, params models.UserBannerRequest) (models.UserBannerResponse, error)
+		GetBanners(ctx context.Context, params models.BannersRequest) ([]models.BannersResponse, error)
+		DeleteBanner(ctx context.Context, id int) error
+		PatchBannerId(ctx context.Context, id int, banner models.PatchBanner) error
+	}
+
+	bannerCache interface {
+		GetUserBannerFromCache(tagId, featureId int) (models.UserBannerResponse, bool)
+		SetUserBannerInCache(banner models.PostBannerRequest)
 	}
 
 	authService struct {
@@ -32,6 +41,7 @@ type (
 	bannerService struct {
 		logger     *zap.SugaredLogger
 		bannerRepo bannerRepo
+		cache      bannerCache
 		validator  *validator.Validate
 	}
 )
@@ -46,10 +56,11 @@ func NewAuthService(jwtSecret, passSecret string, logger *zap.SugaredLogger, aut
 	}
 }
 
-func NewBannerService(logger *zap.SugaredLogger, bannerRepo bannerRepo) *bannerService {
+func NewBannerService(logger *zap.SugaredLogger, bannerRepo bannerRepo, cache bannerCache) *bannerService {
 	return &bannerService{
 		logger:     logger,
 		bannerRepo: bannerRepo,
+		cache:      cache,
 		validator:  validator.New(),
 	}
 }

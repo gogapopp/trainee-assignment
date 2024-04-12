@@ -33,7 +33,7 @@ func (s *storage) SignUp(ctx context.Context, user models.SignUpRequest) error {
 func (s *storage) SignIn(ctx context.Context, user models.SignInRequest) (int, string, error) {
 	const (
 		op    = "postgres.auth.SignIn"
-		query = "SELECT user_id, role FROM users WHERE username=$1 AND password_hash=$2"
+		query = "SELECT user_id, role FROM users WHERE username=$1 AND password_hash=$2;"
 	)
 	var (
 		userId int

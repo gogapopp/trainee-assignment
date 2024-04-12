@@ -43,6 +43,16 @@ func errorHandlerFunc(w http.ResponseWriter, r *http.Request, err error) {
 	w.WriteHeader(http.StatusBadRequest)
 	if err := json.NewEncoder(w).Encode(errorResponse{Error: err.Error()}); err != nil {
 		internalServerErrorHandlerFunc(w)
+		return
+	}
+}
+
+func badRequestHandlerFunc(w http.ResponseWriter, err string, code int) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	if err := json.NewEncoder(w).Encode(errorResponse{Error: err}); err != nil {
+		internalServerErrorHandlerFunc(w)
+		return
 	}
 }
 
