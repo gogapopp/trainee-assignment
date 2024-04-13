@@ -30,7 +30,9 @@ type (
 		GetUserBannerFromCache(tagId, featureId int) (models.UserBannerResponse, bool)
 		SetUserBannerInCache(banner models.PostBannerRequest)
 	}
+)
 
+type (
 	authService struct {
 		logger     *zap.SugaredLogger
 		authRepo   authRepo

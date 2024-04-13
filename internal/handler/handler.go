@@ -24,13 +24,13 @@ type (
 		PatchBannerId(ctx context.Context, id int, banner models.PatchBanner) error
 		DeleteBannerByFeatureId(ctx context.Context, featureId int) error
 	}
-
-	APIHandler struct {
-		logger        *zap.SugaredLogger
-		authService   authService
-		bannerService bannerService
-	}
 )
+
+type APIHandler struct {
+	logger        *zap.SugaredLogger
+	authService   authService
+	bannerService bannerService
+}
 
 func New(logger *zap.SugaredLogger, authService authService, bannerService bannerService) *APIHandler {
 	return &APIHandler{

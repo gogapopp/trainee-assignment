@@ -17,6 +17,7 @@ const (
 	UserRoleKey ctxKeyRole = ""
 )
 
+// AuthMiddleware проверяет jwt токен
 func AuthMiddleware(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("token")
