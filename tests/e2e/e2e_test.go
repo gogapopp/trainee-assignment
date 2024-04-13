@@ -19,7 +19,7 @@ import (
 	"github.com/gogapopp/trainee-assignment/internal/repository/cache"
 	"github.com/gogapopp/trainee-assignment/internal/repository/postgres"
 	"github.com/gogapopp/trainee-assignment/internal/service"
-	"github.com/gogapopp/trainee-assignment/tests/e2e/util"
+	"github.com/gogapopp/trainee-assignment/tests/e2e/internal/util"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -38,6 +38,7 @@ func (m *MockBannerRepo) GetBanners(ctx context.Context, params models.BannersRe
 	return args.Get(0).([]models.BannersResponse), args.Error(1)
 }
 
+// TestAPIHandlerBannerSaveAndGet тестирует сценарий сохранения и получения банера новым пользователем
 func TestAPIHandlerBannerSaveAndGet(t *testing.T) {
 	cmd := exec.Command("docker-compose", "up", "-d", "pg-local")
 	err := cmd.Run()
