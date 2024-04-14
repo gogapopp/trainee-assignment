@@ -2,7 +2,6 @@ package handler
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -21,22 +20,7 @@ import (
 	"github.com/gogapopp/trainee-assignment/internal/service"
 	"github.com/gogapopp/trainee-assignment/tests/e2e/internal/util"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 )
-
-type MockBannerRepo struct {
-	mock.Mock
-}
-
-func (m *MockBannerRepo) SaveBanner(ctx context.Context, banner models.PostBannerRequest) (int, error) {
-	args := m.Called(ctx, banner)
-	return args.Int(0), args.Error(1)
-}
-
-func (m *MockBannerRepo) GetBanners(ctx context.Context, params models.BannersRequest) ([]models.BannersResponse, error) {
-	args := m.Called(ctx, params)
-	return args.Get(0).([]models.BannersResponse), args.Error(1)
-}
 
 // TestAPIHandlerBannerSaveAndGet тестирует сценарий сохранения и получения банера новым пользователем
 func TestAPIHandlerBannerSaveAndGet(t *testing.T) {
