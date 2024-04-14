@@ -9,7 +9,7 @@ import (
 
 	"github.com/gogapopp/trainee-assignment/internal/config"
 	"github.com/gogapopp/trainee-assignment/internal/handler"
-	"github.com/gogapopp/trainee-assignment/internal/lib/logger"
+	"github.com/gogapopp/trainee-assignment/internal/logger"
 	"github.com/gogapopp/trainee-assignment/internal/repository/cache"
 	"github.com/gogapopp/trainee-assignment/internal/repository/postgres"
 	"github.com/gogapopp/trainee-assignment/internal/service"

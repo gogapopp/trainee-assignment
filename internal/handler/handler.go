@@ -22,14 +22,15 @@ type (
 		GetBanners(ctx context.Context, params models.BannersRequest) ([]models.BannersResponse, error)
 		DeleteBanner(ctx context.Context, id int) error
 		PatchBannerId(ctx context.Context, id int, banner models.PatchBanner) error
-	}
-
-	APIHandler struct {
-		logger        *zap.SugaredLogger
-		authService   authService
-		bannerService bannerService
+		DeleteBannerByFeatureId(ctx context.Context, featureId int) error
 	}
 )
+
+type APIHandler struct {
+	logger        *zap.SugaredLogger
+	authService   authService
+	bannerService bannerService
+}
 
 func New(logger *zap.SugaredLogger, authService authService, bannerService bannerService) *APIHandler {
 	return &APIHandler{

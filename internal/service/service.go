@@ -14,7 +14,7 @@ var ErrUndefinedRole = errors.New("undefined role")
 type (
 	authRepo interface {
 		SignUp(ctx context.Context, user models.SignUpRequest) error
-		SignIn(ctx context.Context, user models.SignInRequest) (int, string, error)
+		SignIn(ctx context.Context, user models.SignInRequest) (string, error)
 	}
 
 	bannerRepo interface {
@@ -23,13 +23,16 @@ type (
 		GetBanners(ctx context.Context, params models.BannersRequest) ([]models.BannersResponse, error)
 		DeleteBanner(ctx context.Context, id int) error
 		PatchBannerId(ctx context.Context, id int, banner models.PatchBanner) error
+		DeleteBannerByFeatureId(ctx context.Context, featureId int) error
 	}
 
 	bannerCache interface {
 		GetUserBannerFromCache(tagId, featureId int) (models.UserBannerResponse, bool)
 		SetUserBannerInCache(banner models.PostBannerRequest)
 	}
+)
 
+type (
 	authService struct {
 		logger     *zap.SugaredLogger
 		authRepo   authRepo

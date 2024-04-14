@@ -55,15 +55,6 @@ func New(dsn string) (*storage, error) {
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
-	_, err = tx.Exec(ctx, `
-	CREATE TABLE IF NOT EXISTS banners_tags (
-		banner_id INTEGER,
-		tag_id INTEGER
-	);
-	`)
-	if err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
-	}
 
 	return &storage{
 		db: db,

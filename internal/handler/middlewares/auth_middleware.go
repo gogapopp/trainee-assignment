@@ -10,15 +10,14 @@ import (
 )
 
 type (
-	ctxKeyUserID int
-	ctxKeyRole   string
+	ctxKeyRole string
 )
 
 const (
-	UserIDKey   ctxKeyUserID = 0
-	UserRoleKey ctxKeyRole   = ""
+	UserRoleKey ctxKeyRole = ""
 )
 
+// AuthMiddleware проверяет jwt токен
 func AuthMiddleware(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("token")
@@ -27,41 +26,16 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		userID, role, err := jwt.ParseJWTToken(os.Getenv("JWT_SECRET_KEY"), authHeader)
+		role, err := jwt.ParseJWTToken(os.Getenv("JWT_SECRET_KEY"), authHeader)
 		if err != nil {
 			http.Error(w, "invalid authorization token", http.StatusUnauthorized)
 			return
 		}
 
 		ctx := r.Context()
-		ctx = context.WithValue(ctx, UserIDKey, fmt.Sprint(userID))
 		ctx = context.WithValue(ctx, UserRoleKey, fmt.Sprint(role))
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	}
 	return http.HandlerFunc(fn)
-}
-
-func RolesMiddleware(next http.Handler) http.Handler {
-	fn := func(w http.ResponseWriter, r *http.Request) {
-		ctx := r.Context()
-
-		if ok := isAdmin(ctx); !ok {
-			http.Error(w, "you dont have premissions", http.StatusForbidden)
-			return
-		}
-
-		next.ServeHTTP(w, r)
-	}
-	return http.HandlerFunc(fn)
-}
-
-func isAdmin(ctx context.Context) bool {
-	userRole := ctx.Value(UserRoleKey)
-	if r, ok := userRole.(string); ok {
-		if r == "admin" {
-			return true
-		}
-	}
-	return false
 }

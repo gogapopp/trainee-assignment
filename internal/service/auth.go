@@ -34,11 +34,11 @@ func (a *authService) SignIn(ctx context.Context, user models.SignInRequest) (st
 		return "", fmt.Errorf("%s: %w", op, err)
 	}
 	user.PasswordHash = a.generatePasswordHash(user.PasswordHash)
-	userId, userRole, err := a.authRepo.SignIn(ctx, user)
+	userRole, err := a.authRepo.SignIn(ctx, user)
 	if err != nil {
 		return "", fmt.Errorf("%s: %w", op, err)
 	}
-	token, err := jwt.GenerateJWTToken(a.jwtSecret, userId, userRole, user.Username, user.PasswordHash)
+	token, err := jwt.GenerateJWTToken(a.jwtSecret, userRole, user.Username, user.PasswordHash)
 	if err != nil {
 		return "", fmt.Errorf("%s: %w", op, err)
 	}

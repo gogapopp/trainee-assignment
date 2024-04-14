@@ -50,6 +50,12 @@ type PostBannerParams struct {
 	Token *string `json:"token,omitempty"`
 }
 
+// DeleteBannerFeatureIdIdParams defines parameters for DeleteBannerFeatureIdId.
+type DeleteBannerFeatureIdIdParams struct {
+	// Token Токен админа
+	Token *string `json:"token,omitempty"`
+}
+
 // DeleteBannerIdParams defines parameters for DeleteBannerId.
 type DeleteBannerIdParams struct {
 	// Token Токен админа
@@ -102,6 +108,9 @@ type ServerInterface interface {
 	// (POST /banner)
 	PostBanner(w http.ResponseWriter, r *http.Request, params PostBannerParams)
 	// Удаление баннера по идентификатору
+	// (DELETE /banner/feature_id/{id})
+	DeleteBannerFeatureIdId(w http.ResponseWriter, r *http.Request, id int, params DeleteBannerFeatureIdIdParams)
+	// Удаление баннера по идентификатору
 	// (DELETE /banner/{id})
 	DeleteBannerId(w http.ResponseWriter, r *http.Request, id int, params DeleteBannerIdParams)
 	// Обновление содержимого баннера
@@ -125,6 +134,12 @@ func (_ Unimplemented) GetBanner(w http.ResponseWriter, r *http.Request, params 
 // Создание нового баннера
 // (POST /banner)
 func (_ Unimplemented) PostBanner(w http.ResponseWriter, r *http.Request, params PostBannerParams) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Удаление баннера по идентификатору
+// (DELETE /banner/feature_id/{id})
+func (_ Unimplemented) DeleteBannerFeatureIdId(w http.ResponseWriter, r *http.Request, id int, params DeleteBannerFeatureIdIdParams) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -260,6 +275,56 @@ func (siw *ServerInterfaceWrapper) PostBanner(w http.ResponseWriter, r *http.Req
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.PostBanner(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// DeleteBannerFeatureIdId operation middleware
+func (siw *ServerInterfaceWrapper) DeleteBannerFeatureIdId(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "id" -------------
+	var id int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", chi.URLParam(r, "id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params DeleteBannerFeatureIdIdParams
+
+	headers := r.Header
+
+	// ------------- Optional header parameter "token" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("token")]; found {
+		var Token string
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "token", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "token", valueList[0], &Token, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "token", Err: err})
+			return
+		}
+
+		params.Token = &Token
+
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.DeleteBannerFeatureIdId(w, r, id, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -568,6 +633,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Post(options.BaseURL+"/banner", wrapper.PostBanner)
 	})
 	r.Group(func(r chi.Router) {
+		r.Delete(options.BaseURL+"/banner/feature_id/{id}", wrapper.DeleteBannerFeatureIdId)
+	})
+	r.Group(func(r chi.Router) {
 		r.Delete(options.BaseURL+"/banner/{id}", wrapper.DeleteBannerId)
 	})
 	r.Group(func(r chi.Router) {
@@ -583,27 +651,28 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

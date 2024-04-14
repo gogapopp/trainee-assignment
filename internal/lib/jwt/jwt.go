@@ -12,14 +12,12 @@ var errUnknownClaimsType = errors.New("unknown claims type")
 const TOKEN_EXP = time.Minute * 10
 
 type tokenClaims struct {
-	UserID int
-	Role   string
+	Role string
 	jwt.RegisteredClaims
 }
 
-func GenerateJWTToken(jwtSecret string, userID int, role, username, password string) (string, error) {
+func GenerateJWTToken(jwtSecret string, role, username, password string) (string, error) {
 	claims := tokenClaims{
-		userID,
 		role,
 		jwt.RegisteredClaims{
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -34,7 +32,7 @@ func GenerateJWTToken(jwtSecret string, userID int, role, username, password str
 	return ss, nil
 }
 
-func ParseJWTToken(jwtSecret, userJWTToken string) (int, string, error) {
+func ParseJWTToken(jwtSecret, userJWTToken string) (string, error) {
 	token, err := jwt.ParseWithClaims(userJWTToken, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, jwt.ErrSignatureInvalid
@@ -42,9 +40,9 @@ func ParseJWTToken(jwtSecret, userJWTToken string) (int, string, error) {
 		return []byte([]byte(jwtSecret)), nil
 	})
 	if err != nil {
-		return 0, "", err
+		return "", err
 	} else if claims, ok := token.Claims.(*tokenClaims); ok {
-		return claims.UserID, claims.Role, nil
+		return claims.Role, nil
 	}
-	return 0, "", errUnknownClaimsType
+	return "", errUnknownClaimsType
 }

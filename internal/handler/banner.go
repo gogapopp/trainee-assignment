@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -175,4 +176,27 @@ func (h *APIHandler) GetUserBanner(w http.ResponseWriter, r *http.Request, param
 		internalServerErrorHandlerFunc(w)
 		return
 	}
+}
+
+// Удаление баннера по фиче
+// (DELETE /banner/feature_id/{id})
+func (h *APIHandler) DeleteBannerFeatureIdId(w http.ResponseWriter, r *http.Request, id int, params DeleteBannerFeatureIdIdParams) {
+	const op = "handler.banner.DeleteBannerFeatureIdId"
+	ctx := r.Context()
+	if ok := admin.IsAdmin(ctx); !ok {
+		http.Error(w, "you dont have premissions", http.StatusForbidden)
+		return
+	}
+	if id < 0 {
+		badRequestHandlerFunc(w, "bad request", http.StatusBadRequest)
+		return
+	}
+	go func() {
+		err := h.bannerService.DeleteBannerByFeatureId(context.Background(), id)
+		if err != nil {
+			h.logger.Errorf("%s: %w", op, err)
+			return
+		}
+	}()
+	w.WriteHeader(http.StatusAccepted)
 }

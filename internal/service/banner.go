@@ -95,3 +95,7 @@ func (b *bannerService) PatchBannerId(ctx context.Context, id int, banner models
 	}
 	return nil
 }
+
+func (b *bannerService) DeleteBannerByFeatureId(ctx context.Context, featureId int) error {
+	return b.bannerRepo.DeleteBannerByFeatureId(ctx, featureId)
+}
