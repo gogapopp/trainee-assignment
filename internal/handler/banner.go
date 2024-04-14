@@ -11,8 +11,8 @@ import (
 	"github.com/gogapopp/trainee-assignment/internal/service"
 )
 
-// Получение всех баннеров c фильтрацией по фиче и/или тегу
 // (GET /banner)
+// GetBanner getting all banners filtered by feature and/or tag.
 func (h *APIHandler) GetBanner(w http.ResponseWriter, r *http.Request, params GetBannerParams) {
 	const op = "handler.banner.GetBanner"
 	ctx := r.Context()
@@ -41,8 +41,8 @@ func (h *APIHandler) GetBanner(w http.ResponseWriter, r *http.Request, params Ge
 
 }
 
-// Создание нового баннера
 // (POST /banner)
+// PostBanner creating a new banner.
 func (h *APIHandler) PostBanner(w http.ResponseWriter, r *http.Request, params PostBannerParams) {
 	const op = "handler.banner.PostBanner"
 	ctx := r.Context()
@@ -74,8 +74,8 @@ func (h *APIHandler) PostBanner(w http.ResponseWriter, r *http.Request, params P
 	}
 }
 
-// Удаление баннера по идентификатору
 // (DELETE /banner/{id})
+// DeleteBannerId deleting a banner by ID.
 func (h *APIHandler) DeleteBannerId(w http.ResponseWriter, r *http.Request, id int, params DeleteBannerIdParams) {
 	const op = "handler.banner.DeleteBannerId"
 	ctx := r.Context()
@@ -96,8 +96,8 @@ func (h *APIHandler) DeleteBannerId(w http.ResponseWriter, r *http.Request, id i
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// Обновление содержимого баннера
 // (PATCH /banner/{id})
+// PatchBannerId updating the banner content.
 func (h *APIHandler) PatchBannerId(w http.ResponseWriter, r *http.Request, id int, params PatchBannerIdParams) {
 	const op = "handler.banner.PatchBanner"
 	ctx := r.Context()
@@ -125,8 +125,8 @@ func (h *APIHandler) PatchBannerId(w http.ResponseWriter, r *http.Request, id in
 	w.WriteHeader(http.StatusOK)
 }
 
-// Получение баннера для пользователя
 // (GET /user_banner)
+// GetUserBanner getting a banner for the user.
 func (h *APIHandler) GetUserBanner(w http.ResponseWriter, r *http.Request, params GetUserBannerParams) {
 	const op = "handler.banner.GetUserBanner"
 	ctx := r.Context()
@@ -161,8 +161,8 @@ func (h *APIHandler) GetUserBanner(w http.ResponseWriter, r *http.Request, param
 	}
 }
 
-// Удаление баннера по фиче
 // (DELETE /banner/feature_id/{id})
+// DeleteBannerFeatureIdId deleting a banner by feature.
 func (h *APIHandler) DeleteBannerFeatureIdId(w http.ResponseWriter, r *http.Request, id int, params DeleteBannerFeatureIdIdParams) {
 	const op = "handler.banner.DeleteBannerFeatureIdId"
 	if id < 0 {

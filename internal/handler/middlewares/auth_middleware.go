@@ -17,7 +17,6 @@ const (
 	UserRoleKey ctxKeyRole = ""
 )
 
-// AuthMiddleware проверяет jwt токен
 func AuthMiddleware(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("token")
@@ -49,7 +48,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(fn)
 }
 
-// IsAdmin проверяет из контекста роль admin для пользователя
+// IsAdmin checks the admin role for the user from the context.
 func IsAdmin(ctx context.Context) bool {
 	userRole := ctx.Value(UserRoleKey)
 	if r, ok := userRole.(string); ok {

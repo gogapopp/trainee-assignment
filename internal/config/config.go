@@ -7,13 +7,14 @@ import (
 )
 
 type Config struct {
-	HTTPConfig  *httpConfig // содержит конфиг для http сервера
-	PGConfig    *pgConfig   // содержит конфиг для postgres
+	HTTPConfig  *httpConfig // contains a config for the http server
+	PGConfig    *pgConfig   // contains a config for postgres
 	JWT_SECRET  string
 	PASS_SECRET string
 }
 
-// New возвращает структуру конфига для сервиса
+// New loads env for db, secrets and http server from .env
+// and returns the configuration structure for the service.
 func New(path string) (*Config, error) {
 	err := godotenv.Load(path)
 	if err != nil {

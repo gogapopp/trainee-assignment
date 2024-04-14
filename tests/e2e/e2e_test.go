@@ -22,7 +22,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// TestAPIHandlerBannerSaveAndGet тестирует сценарий сохранения и получения банера новым пользователем
+// TestAPIHandlerBannerSaveAndGet tests the scenario of saving and receiving a banner by a new user
 func TestAPIHandlerBannerSaveAndGet(t *testing.T) {
 	cmd := exec.Command("docker-compose", "up", "-d", "pg-local")
 	err := cmd.Run()
@@ -79,42 +79,42 @@ func TestAPIHandlerBannerSaveAndGet(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// регистрация
+			// registration
 			signUpBody, _ := json.Marshal(tt.signUpReq)
 			signUpReq, _ := http.NewRequest(http.MethodPost, "/signup", bytes.NewBuffer(signUpBody))
 			signUpResp := httptest.NewRecorder()
 			h.SignUp(signUpResp, signUpReq)
 			assert.Equal(t, http.StatusCreated, signUpResp.Code)
-			// логин для получения токена
+			// login to receive the token
 			signInBody, _ := json.Marshal(tt.signInReq)
 			signInReq, _ := http.NewRequest(http.MethodPost, "/signin", bytes.NewBuffer(signInBody))
 			signInResp := httptest.NewRecorder()
 			h.SignIn(signInResp, signInReq)
-			// проверяем ответ от signin
+			// checking the response from /signin
 			assert.Equal(t, tt.wantStatus, signInResp.Code)
 			var resp models.SignInResponse
 			json.Unmarshal(signInResp.Body.Bytes(), &resp)
 			assert.NotEmpty(t, resp.Token)
-			// cоздание баннера
+			// creating a banner...
 			postBannerBody, _ := json.Marshal(tt.postBannerReq)
 			postBannerReq, _ := http.NewRequest(http.MethodPost, "/banner", bytes.NewBuffer(postBannerBody))
 			postBannerReq.Header.Set("token", resp.Token) // Добавление токена в заголовок
 			postBannerResp := httptest.NewRecorder()
-			// новый хендлер с middleware
+			// anew handler with middleware
 			handlerWithMiddleware := middlewares.AuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				h.PostBanner(w, r, handler.PostBannerParams{})
 			}))
 			handlerWithMiddleware.ServeHTTP(postBannerResp, postBannerReq)
-			// проверяем ответ
+			// checking the answer
 			assert.Equal(t, http.StatusCreated, postBannerResp.Code)
 			var postBannerRespModel models.PostBannerResponse
 			json.Unmarshal(postBannerResp.Body.Bytes(), &postBannerRespModel)
 			assert.NotEmpty(t, postBannerRespModel.BannerID)
-			// получение баннера
+			// getting a banner
 			getBannerReq, _ := http.NewRequest(http.MethodGet, "/user_banner?tag_id=1&feature_id=1", nil)
 			getBannerReq.Header.Set("token", resp.Token) // Добавление токена в заголовок
 			getBannerResp := httptest.NewRecorder()
-			// новый хендлер с middleware
+			// a new handler with middleware
 			handlerWithMiddleware = middlewares.AuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				h.GetUserBanner(w, r, handler.GetUserBannerParams{
 					FeatureId: 1,
@@ -122,7 +122,7 @@ func TestAPIHandlerBannerSaveAndGet(t *testing.T) {
 				})
 			}))
 			handlerWithMiddleware.ServeHTTP(getBannerResp, getBannerReq)
-			// проверяем ответ
+			// checking the answer
 			assert.Equal(t, http.StatusOK, getBannerResp.Code)
 			var getBannerRespModel models.Content
 			json.Unmarshal(getBannerResp.Body.Bytes(), &getBannerRespModel)
@@ -132,7 +132,7 @@ func TestAPIHandlerBannerSaveAndGet(t *testing.T) {
 			assert.Equal(t, getBannerRespModel.URL, tt.postBannerReq.Content.URL)
 		})
 	}
-	// отключаемся
+	// turn off
 	cmd = exec.Command("make", "stop")
 	err = cmd.Run()
 	assert.NoError(t, err)
