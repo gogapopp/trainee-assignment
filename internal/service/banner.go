@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/gogapopp/trainee-assignment/internal/lib/admin"
+	"github.com/gogapopp/trainee-assignment/internal/handler/middlewares"
 	"github.com/gogapopp/trainee-assignment/internal/models"
 )
 
@@ -62,7 +62,7 @@ func (b *bannerService) GetUserBanner(ctx context.Context, params models.UserBan
 }
 
 func isActive(ctx context.Context, isActive bool) error {
-	if ok := admin.IsAdmin(ctx); ok {
+	if ok := middlewares.IsAdmin(ctx); ok {
 		return nil
 	}
 	if !isActive {

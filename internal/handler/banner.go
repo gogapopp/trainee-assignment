@@ -6,7 +6,6 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/gogapopp/trainee-assignment/internal/lib/admin"
 	"github.com/gogapopp/trainee-assignment/internal/models"
 	"github.com/gogapopp/trainee-assignment/internal/repository"
 	"github.com/gogapopp/trainee-assignment/internal/service"
@@ -17,10 +16,6 @@ import (
 func (h *APIHandler) GetBanner(w http.ResponseWriter, r *http.Request, params GetBannerParams) {
 	const op = "handler.banner.GetBanner"
 	ctx := r.Context()
-	if ok := admin.IsAdmin(ctx); !ok {
-		http.Error(w, "you dont have premissions", http.StatusForbidden)
-		return
-	}
 	banners, err := h.bannerService.GetBanners(ctx, models.BannersRequest{
 		FeatureId: params.FeatureId,
 		TagId:     params.TagId,
@@ -51,10 +46,6 @@ func (h *APIHandler) GetBanner(w http.ResponseWriter, r *http.Request, params Ge
 func (h *APIHandler) PostBanner(w http.ResponseWriter, r *http.Request, params PostBannerParams) {
 	const op = "handler.banner.PostBanner"
 	ctx := r.Context()
-	if ok := admin.IsAdmin(ctx); !ok {
-		http.Error(w, "you dont have premissions", http.StatusForbidden)
-		return
-	}
 	var req models.PostBannerRequest
 	var resp models.PostBannerResponse
 	err := json.NewDecoder(r.Body).Decode(&req)
@@ -88,10 +79,6 @@ func (h *APIHandler) PostBanner(w http.ResponseWriter, r *http.Request, params P
 func (h *APIHandler) DeleteBannerId(w http.ResponseWriter, r *http.Request, id int, params DeleteBannerIdParams) {
 	const op = "handler.banner.DeleteBannerId"
 	ctx := r.Context()
-	if ok := admin.IsAdmin(ctx); !ok {
-		http.Error(w, "you dont have premissions", http.StatusForbidden)
-		return
-	}
 	if id < 0 {
 		badRequestHandlerFunc(w, "bad request", http.StatusBadRequest)
 		return
@@ -114,10 +101,6 @@ func (h *APIHandler) DeleteBannerId(w http.ResponseWriter, r *http.Request, id i
 func (h *APIHandler) PatchBannerId(w http.ResponseWriter, r *http.Request, id int, params PatchBannerIdParams) {
 	const op = "handler.banner.PatchBanner"
 	ctx := r.Context()
-	if ok := admin.IsAdmin(ctx); !ok {
-		http.Error(w, "you dont have premissions", http.StatusForbidden)
-		return
-	}
 	var req models.PatchBanner
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
@@ -182,11 +165,6 @@ func (h *APIHandler) GetUserBanner(w http.ResponseWriter, r *http.Request, param
 // (DELETE /banner/feature_id/{id})
 func (h *APIHandler) DeleteBannerFeatureIdId(w http.ResponseWriter, r *http.Request, id int, params DeleteBannerFeatureIdIdParams) {
 	const op = "handler.banner.DeleteBannerFeatureIdId"
-	ctx := r.Context()
-	if ok := admin.IsAdmin(ctx); !ok {
-		http.Error(w, "you dont have premissions", http.StatusForbidden)
-		return
-	}
 	if id < 0 {
 		badRequestHandlerFunc(w, "bad request", http.StatusBadRequest)
 		return

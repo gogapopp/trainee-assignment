@@ -35,7 +35,27 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		ctx := r.Context()
 		ctx = context.WithValue(ctx, UserRoleKey, fmt.Sprint(role))
 
+		if r.URL.Path == "/user_banner" {
+			next.ServeHTTP(w, r.WithContext(ctx))
+			return
+		}
+		if ok := IsAdmin(ctx); !ok {
+			http.Error(w, "you dont have premissions", http.StatusForbidden)
+			return
+		}
+
 		next.ServeHTTP(w, r.WithContext(ctx))
 	}
 	return http.HandlerFunc(fn)
+}
+
+// IsAdmin проверяет из контекста роль admin для пользователя
+func IsAdmin(ctx context.Context) bool {
+	userRole := ctx.Value(UserRoleKey)
+	if r, ok := userRole.(string); ok {
+		if r == "admin" {
+			return true
+		}
+	}
+	return false
 }
