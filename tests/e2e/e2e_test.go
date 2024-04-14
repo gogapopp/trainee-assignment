@@ -53,7 +53,7 @@ func TestAPIHandlerBannerSaveAndGet(t *testing.T) {
 		wantStatus    int
 	}{
 		{
-			name: "Valid SignUp and SignIn",
+			name: "Valid signup, signin, save banner, get banner",
 			signUpReq: models.SignUpRequest{
 				Username:     userName,
 				PasswordHash: userPass,
