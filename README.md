@@ -4,18 +4,24 @@
 
 Described in the file [api.yml](api.yml).
 
+## How to compile (with docker)
+
+```bash
+make run
+```
+
+## How to stop the application
+
+```bash
+make stop
+```
+
 ## Generating code from a specification
 
 Install [oapi-codegen](https://github.com/deepmap/oapi-codegen/) and generate:
 
 ```bash
 oapi-codegen -package=handler -generate="chi-server,types,spec" api.yaml > internal/handler/api.gen.go
-```
-
-## How to compile
-
-```bash
-make run
 ```
 
 ## Additional tasks
